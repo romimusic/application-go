@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/romimusic/application-go/pkg/config"
-	"github.com/romimusic/application-go/pkg/handlers"
+	"github.com/romimusic/application-go/pkg/models"
 )
 
 // global variables
@@ -20,7 +20,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, td *handlers.TemplateData) {
+// AddDefaultData adds data to the template
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	//create a template cache from the app config
 	var tc map[string]*template.Template
 
@@ -39,7 +44,9 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, td *handlers.TemplateDat
 
 	buf := new(bytes.Buffer)
 
-	_ = t.Execute(buf, nil)
+	td = AddDefaultData(td)
+
+	_ = t.Execute(buf, td)
 
 	//render template
 	_, err := buf.WriteTo(w)
@@ -64,7 +71,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		ts, err := template.New(name).ParseFiles(page)
+		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 
 		if err != nil {
 			return myCache, err

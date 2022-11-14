@@ -4,19 +4,9 @@ import (
 	"net/http"
 
 	"github.com/romimusic/application-go/pkg/config"
+	"github.com/romimusic/application-go/pkg/models"
 	"github.com/romimusic/application-go/pkg/render"
 )
-
-type TemplateData struct {
-	StringMap map[string]string
-	IntMap    map[string]int
-	FloatMap  map[string]float32
-	Data      map[string]interface{}
-	CSRFToken string
-	Flash     string
-	Warning   string
-	Error     string
-}
 
 var Repo *Repository
 
@@ -39,7 +29,7 @@ func NewHandlers(r *Repository) {
 // TemplateData holds data sent from handlers to templates
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "home.html", &TemplateData{})
+	render.RenderTemplate(w, "home.html", &models.TemplateData{})
 }
 
 // About is the about page
@@ -49,7 +39,7 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	stringMap["test"] = "Hello, again."
 
 	//send data to the template
-	render.RenderTemplate(w, "about.html", &TemplateData{
+	render.RenderTemplate(w, "about.html", &models.TemplateData{
 		StringMap: stringMap,
 	})
 }
